@@ -1,0 +1,25 @@
+#一、加载包与数据
+rm(list = ls())
+options(stringsAsFactors = F)
+suppressMessages({
+library(Seurat)
+# devtools::install_github('satijalab/seurat-data')
+library(SeuratData)
+library(ggplot2)
+library(patchwork)
+library(dplyr)})
+
+# Load the PBMC dataset
+# Initialize the Seurat object with the raw (non-normalized data).
+#每个10x样品，都是3个文件，下游处理的时候，一定要保证这3个文件同时存在，而且在同一个文件夹下面。
+pbmc.data <- Read10X(data.dir = "filtered_gene_bc_matrices/hg19/") 
+
+pbmc <- CreateSeuratObject(counts = pbmc.data, 
+                           project = "pbmc3k", #给自己的项目取个名字
+                           min.cells = 3,  #每个基因至少在3个细胞中表达
+                           min.features = 200) #每个细胞中至少有200个基因被检测到
+pbmc #可以看到这个数据集中有13714 features/gene 和 2700 samples/cell（只是查看，可省略）
+## An object of class Seurat 
+## 13714 features across 2700 samples within 1 assay 
+## Active assay: RNA (13714 features, 0 variable features)
+###二、质控
